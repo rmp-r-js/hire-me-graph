@@ -1,0 +1,25 @@
+{
+  "name": "github-commit-bot",
+  "version": "1.0.0",
+  "description": "Automated backdated commit generator for GitHub using PAT and MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "seed": "node scripts/seedJobs.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "github",
+    "automation",
+    "commit",
+    "mongodb",
+    "octokit"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^20.0.0",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.3.0"
+  }
+}

@@ -9,7 +9,8 @@ const octokit = new Octokit({
 let cachedUser = null;
 
 /**
- * GitHub PAT ka use karke User ka Username, Asli Naam, Verified Primary Email aur Default Branch automatically fetch karta hai
+ * GitHub PAT ka use karke User ka Username, Asli Naam, Verified Primary Email fetch karta hai.
+ * AGAR REPO NAHI MILA, TOH APNE AAP NAYA PRIVATE REPO BANA DETA HAI! 🔥
  */
 async function getAuthenticatedUser() {
   // Agar pehle se fetch kiya hua data hai, toh wahi return kar do (API call bacha lo)
@@ -33,16 +34,44 @@ async function getAuthenticatedUser() {
       throw new Error("❌ GitHub account me koi verified email nahi mila! Green dots ke liye verified email zaroori hai.");
     }
 
-    // 3. Repository ki Default Branch (`main` ya `master`) automatically detect karo
+    // 3. Repository check karo ya automatic NAYA REPO banao
     const repoName = process.env.GITHUB_REPO;
     if (!repoName) {
       throw new Error("❌ .env me GITHUB_REPO ka naam missing hai! Kripya repo ka naam daalein.");
     }
 
-    const { data: repoData } = await octokit.repos.get({
-      owner: user.login,
-      repo: repoName
-    });
+    let repoData;
+    try {
+      // Pehle check karte hain ki kya repo pehle se exist karta hai
+      const response = await octokit.repos.get({
+        owner: user.login,
+        repo: repoName
+      });
+      repoData = response.data;
+      console.log(`📁 Existing Repository mil gaya: ${repoData.html_url}`);
+    } catch (error) {
+      // Agar repo nahi mila (404 Not Found), toh automatic bana do!
+      if (error.status === 404) {
+        console.log(`⚠️ Repository '${repoName}' nahi mila! Automatic naya Private Repo bana rahe hain... 🪄`);
+        
+        const createResponse = await octokit.repos.createForAuthenticatedUser({
+          name: repoName,
+          private: true, // 👈 Safe default: Graph art repo ko private rakhte hain
+          auto_init: true, // 👈 CRITICAL: Low-level Git API ke liye initial commit/README zaroori hai!
+          description: "Automated Contribution Graph Art Repository by JSS Originals Bot"
+        });
+        
+        repoData = createResponse.data;
+        console.log(`✅ Badhaai ho! Naya Repository successfully ban gaya: ${repoData.html_url}`);
+        console.log(`⏳ GitHub servers par branch initialize hone ka 3 second wait kar rahe hain...\n`);
+        
+        // Naya repo banne ke baad GitHub ko branch setup karne ke liye 3 second ka time dete hain
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      } else {
+        // Agar koi aur error (jaise permission issue) hai toh throw karo
+        throw error;
+      }
+    }
 
     // Details ko cache me store kar lo
     cachedUser = {
@@ -55,11 +84,11 @@ async function getAuthenticatedUser() {
 
     console.log(`👤 Verified User found: ${cachedUser.name} (@${cachedUser.owner})`);
     console.log(`📧 Verified Email found: ${cachedUser.email}`);
-    console.log(`📁 Target Repository: ${cachedUser.owner}/${cachedUser.repo} [Branch: ${cachedUser.branch}]\n`);
+    console.log(`🎯 Target Repository: ${cachedUser.owner}/${cachedUser.repo} [Branch: ${cachedUser.branch}]\n`);
 
     return cachedUser;
   } catch (error) {
-    console.error('❌ User details fetch karne me error aaya:', error.message);
+    console.error('❌ User details ya repository setup karne me error aaya:', error.message);
     throw error;
   }
 }

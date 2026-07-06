@@ -14,38 +14,55 @@ const server = http.createServer(async (req, res) => {
     try {
       console.log('🌱 Browser se Seed request aayi hai! Database clean karke load kar rahe hain...');
       
-      // "HIRE ME" draw karne wali exact dates (Monday-Friday blocks)
-      const hireMeDates = [
-        // H
-        "2025-12-29", "2025-12-30", "2025-12-31", "2026-01-01", "2026-01-02", "2026-01-07",
-        "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16",
-        // I
-        "2026-01-26", "2026-01-30", "2026-02-02", "2026-02-03", "2026-02-04", "2026-02-05", "2026-02-06",
-        "2026-02-09", "2026-02-13",
-        // R
-        "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-03-02", "2026-03-04",
-        "2026-03-09", "2026-03-11", "2026-03-12", "2026-03-17", "2026-03-20",
-        // E
-        "2026-03-30", "2026-03-31", "2026-04-01", "2026-04-02", "2026-04-03", "2026-04-06", "2026-04-08",
-        "2026-04-10", "2026-04-13", "2026-04-15", "2026-04-17",
-        // M
-        "2026-05-04", "2026-05-05", "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-12", "2026-05-20",
-        "2026-05-26", "2026-06-01", "2026-06-02", "2026-06-03", "2026-06-04", "2026-06-05",
-        // E
-        "2026-06-15", "2026-06-16", "2026-06-17", "2026-06-18", "2026-06-19", "2026-06-22", "2026-06-24",
-        "2026-06-26", "2026-06-29", "2026-07-01", "2026-07-03"
+      // "JITU BANNA" draw karne wali exact calculated dates (2026 Graph Matrix)
+      const jituBannaDates = [
+        // ================= J I T U =================
+        // J (Cols 3-6: Jan 11 - Jan 31)
+        "2026-01-11", "2026-01-17", "2026-01-18", "2026-01-24", 
+        "2026-01-25", "2026-01-29", "2026-01-30", "2026-01-31",
+        // I (Cols 8-10: Feb 15 - Feb 28)
+        "2026-02-15", "2026-02-21", "2026-02-22", "2026-02-23", 
+        "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-02-28",
+        // T (Cols 12-14: Mar 15 - Mar 28)
+        "2026-03-15", "2026-03-21", "2026-03-22", "2026-03-23", 
+        "2026-03-24", "2026-03-25", "2026-03-26", "2026-03-27", "2026-03-28",
+        // U (Cols 16-19: Apr 12 - May 02)
+        "2026-04-12", "2026-04-13", "2026-04-14", "2026-04-15", "2026-04-16", "2026-04-17",
+        "2026-04-24", "2026-05-01", "2026-04-19", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-05-02",
+
+        // ================= B A N N A =================
+        // B (Cols 22-25: May 24 - Jun 13) - Special cleanly styled loops
+        "2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30",
+        "2026-05-31", "2026-06-03", "2026-06-06", "2026-06-07", "2026-06-10", "2026-06-13",
+        "2026-06-08", "2026-06-09", "2026-06-11", "2026-06-12",
+        // A (Cols 27-30: Jun 28 - Jul 18)
+        "2026-06-29", "2026-06-30", "2026-07-01", "2026-07-02", "2026-07-03",
+        "2026-06-28", "2026-07-01", "2026-07-05", "2026-07-08", "2026-07-12", "2026-07-15",
+        "2026-07-06", "2026-07-07", "2026-07-08", "2026-07-09", "2026-07-10",
+        // N 1 (Cols 32-35: Aug 02 - Aug 22) - Custom 4-block width to avoid stairs look
+        "2026-08-02", "2026-08-03", "2026-08-04", "2026-08-05", "2026-08-06", "2026-08-07", "2026-08-08",
+        "2026-08-10", "2026-08-11", "2026-08-18", "2026-08-19",
+        "2026-08-16", "2026-08-17", "2026-08-18", "2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22",
+        // N 2 (Cols 37-40: Sep 06 - Sep 26) - Custom 4-block width
+        "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12",
+        "2026-09-14", "2026-09-15", "2026-09-22", "2026-09-23",
+        "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26",
+        // A (Cols 42-45: Oct 11 - Oct 31)
+        "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16",
+        "2026-10-11", "2026-10-14", "2026-10-18", "2026-10-21", "2026-10-25", "2026-10-28",
+        "2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23"
       ];
 
       // Purane jobs delete karo
       await CommitJob.deleteMany({});
       const jobsToInsert = [];
 
-      // Har din ke liye 4 dark-green commits generate honge
-      hireMeDates.forEach((dateString) => {
+      // Har din ke liye 4 dark-green commits generate honge taaki graph me vibrant green color aaye
+      jituBannaDates.forEach((dateString) => {
         for (let i = 1; i <= 4; i++) {
           jobsToInsert.push({
             date: `${dateString}T12:0${i}:00Z`,
-            message: `chore: graph art [${dateString} #${i}]`,
+            message: `chore: graph art JITU BANNA [${dateString} #${i}]`,
             status: 'PENDING',
             retryCount: 0
           });
@@ -58,10 +75,10 @@ const server = http.createServer(async (req, res) => {
 
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(`
-        <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
-          <h1 style="color: #2ea043;">🎉 Magic Success!</h1>
-          <p>Total <b>${jobsToInsert.length} commit jobs</b> database me successfully load ho gaye hain!</p>
-          <p>Worker ab background me automatic commits karna shuru kar chuka hai. Render ke logs check karo! 🚀</p>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; margin-top: 50px; background: #0d1117; color: #c9d1d9; padding: 40px; border-radius: 12px; max-width: 600px; margin-left: auto; margin-right: auto; border: 1px solid #30363d;">
+          <h1 style="color: #3fb950; font-size: 28px;">🎉 Magic Success!</h1>
+          <p style="font-size: 16px;">Total <b>${jobsToInsert.length} commit jobs</b> for <span style="color: #58a6ff; font-weight: bold;">"JITU BANNA"</span> database me successfully load ho gaye hain!</p>
+          <p style="font-size: 14px; color: #8b949e; margin-top: 20px;">Worker ab background me automatic low-level Git commits karna shuru kar chuka hai. Render ke logs check karo! 🚀</p>
         </div>
       `);
     } catch (error) {
@@ -73,11 +90,11 @@ const server = http.createServer(async (req, res) => {
 
   // Normal ping endpoint (Root URL)
   res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-  res.end('🤖 GitHub Commit Bot is 100% running in background... To seed data, go to /seed');
+  res.end('🤖 GitHub Commit Bot (JITU BANNA Edition) is 100% running in background... To seed data, go to /seed');
 });
 
 async function initApp() {
-  console.log('🚀 Starting GitHub Commit Bot...');
+  console.log('🚀 Starting GitHub Commit Bot (JITU BANNA Edition)...');
   
   try {
     // 1. Database Connect Karein
